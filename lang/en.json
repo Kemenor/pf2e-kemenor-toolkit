@@ -12,7 +12,7 @@
       },
       "sharedInvestiture": {
         "name": "Shared investiture",
-        "hint": "Apply the summoner's invested-item benefits to the eidolon: handwraps or shared-weapon runes on its Strikes, armor potency to AC, resilient to saves, and item bonuses to Perception and skills."
+        "hint": "Apply the summoner's invested-item benefits to the eidolon: handwraps or shared-weapon runes on its Strikes, armor potency or bands of force to AC, resilient to saves, and item bonuses to Perception and skills."
       },
       "autoLink": {
         "name": "Link summoners automatically",

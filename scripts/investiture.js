@@ -27,13 +27,20 @@ function push(synthetics, selector, entry) {
     (synthetics.modifiers[selector] ??= []).push(entry);
 }
 
-/** The item bonus a bracers of armor style item grants to the given statistic on the summoner. */
-function bracersBonus(summoner, modifiers) {
-    const bracers = summoner.inventory.filter(
-        (i) => i.isInvested && /^bracers-of-armor/.test(i.slug ?? ""),
+/**
+ * Bands of force is the remaster name for what pre-remaster text calls bracers of armor, and
+ * the rules name it as the alternative source for the eidolon's AC and save item bonuses. Both
+ * spellings are matched so the module works either side of the remaster.
+ */
+const ARMOR_SUBSTITUTE = /^(bands-of-force|bracers-of-armor)/;
+
+/** The item bonus a bands of force style item grants to the given statistic on the summoner. */
+function armorSubstituteBonus(summoner, modifiers) {
+    const items = summoner.inventory.filter(
+        (i) => i.isInvested && ARMOR_SUBSTITUTE.test(i.slug ?? ""),
     );
-    if (!bracers.length) return 0;
-    const slugs = new Set(bracers.map((i) => i.slug));
+    if (!items.length) return 0;
+    const slugs = new Set(items.map((i) => i.slug));
     return Math.max(
         0,
         ...(modifiers ?? []).filter((m) => m.enabled && slugs.has(m.slug)).map((m) => m.modifier),
@@ -65,7 +72,7 @@ export function applyInvestiture(eidolon) {
     // AC: armor potency rune, or bracers of armor, whichever is higher.
     const acBonus = Math.max(
         armor?.system?.runes?.potency ?? 0,
-        bracersBonus(summoner, summoner.system?.attributes?.ac?.modifiers),
+        armorSubstituteBonus(summoner, summoner.system?.attributes?.ac?.modifiers),
     );
     if (acBonus > 0) {
         push(
@@ -82,7 +89,7 @@ export function applyInvestiture(eidolon) {
     // Saves: resilient rune on the summoner's armor, or bracers of armor.
     const saveBonus = Math.max(
         armor?.system?.runes?.resilient ?? 0,
-        bracersBonus(summoner, summoner.saves?.fortitude?.modifiers),
+        armorSubstituteBonus(summoner, summoner.saves?.fortitude?.modifiers),
     );
     if (saveBonus > 0) {
         push(
