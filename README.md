@@ -66,6 +66,17 @@ the scene the summoner is standing on.
 All four are applied, and all four show up on the eidolon's sheet rather than appearing only at
 roll time.
 
+Note the word *increases* in the AC clause. An eidolon already has an item bonus to AC from its
+key attribute — "If Strength is their key attribute, your eidolon has a +2 item bonus to AC with
+a +3 Dexterity cap. If Dexterity is their key attribute, your eidolon has +1 item bonus to AC
+with a +4 Dexterity cap." The summoner's armor potency rune (or bands of force) stacks on top of
+that, rather than competing with it. Since item bonuses otherwise do not stack, the module
+expresses the total as one combined item bonus that supersedes the eidolon's own: a Strength-key
+eidolon whose summoner wears +1 armor ends up at +3, not +2.
+
+Saves work the other way round — the eidolon has no base item bonus there, so the resilient rune
+simply *grants* one.
+
 For the alternative path — "you can Invest a magic weapon (even though magic weapons can't
 normally be Invested) to share its fundamental and property runes with your eidolon" — the
 system has no invested weapons at all: `isInvested` is `null` for every weapon, because none of

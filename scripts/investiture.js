@@ -58,6 +58,26 @@ function investedItemBonuses(summoner, statistic, investedUUIDs) {
     );
 }
 
+/**
+ * The eidolon's own item bonus to AC, which the summoner's armor increases rather than
+ * replaces. It comes from the key-attribute choice (+2 Strength / +1 Dexterity) and is applied
+ * by whichever module built the eidolon, so it is read from the rule elements on its own items
+ * -- the prepared statistic is not available yet at the point this runs.
+ */
+function ownItemBonusToAC(eidolon) {
+    let best = 0;
+    for (const item of eidolon.items) {
+        for (const rule of item._source.system.rules ?? []) {
+            if (rule.key !== "FlatModifier" || rule.type !== "item") continue;
+            const selectors = Array.isArray(rule.selector) ? rule.selector : [rule.selector];
+            if (!selectors.includes("ac")) continue;
+            const value = Number(rule.value);
+            if (Number.isFinite(value)) best = Math.max(best, value);
+        }
+    }
+    return best;
+}
+
 export function applyInvestiture(eidolon) {
     if (!setting("sharedInvestiture")) return;
     const summoner = getSummonerOf(eidolon);
@@ -69,19 +89,23 @@ export function applyInvestiture(eidolon) {
     const armor = summoner.wornArmor;
     const investedUUIDs = new Set(summoner.inventory.filter((i) => i.isInvested).map((i) => i.uuid));
 
-    // AC: armor potency rune, or bracers of armor, whichever is higher.
-    const acBonus = Math.max(
+    // AC: "Your eidolon increases their item bonus to AC based on your armor's armor potency
+    // rune or bands of force." Increases, not replaces -- an eidolon already has an item bonus
+    // to AC from its key attribute (+2 for Strength, +1 for Dexterity), and the summoner's
+    // armor stacks on top of it. Item bonuses do not stack in general, so this is expressed as
+    // a single combined item bonus that supersedes the eidolon's own.
+    const acIncrease = Math.max(
         armor?.system?.runes?.potency ?? 0,
         armorSubstituteBonus(summoner, summoner.system?.attributes?.ac?.modifiers),
     );
-    if (acBonus > 0) {
+    if (acIncrease > 0) {
         push(
             synthetics,
             "ac",
             deferred({
                 slug: "shared-investiture-ac",
                 label: game.i18n.localize(`${MODULE_ID}.investiture.ac`),
-                modifier: acBonus,
+                modifier: ownItemBonusToAC(eidolon) + acIncrease,
             }),
         );
     }

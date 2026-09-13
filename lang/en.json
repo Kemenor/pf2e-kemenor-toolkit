@@ -42,7 +42,7 @@
       "noMagicWeapons": "This summoner carries no weapons with runes."
     },
     "investiture": {
-      "ac": "Shared investiture (armor potency)",
+      "ac": "Eidolon defenses + shared investiture",
       "save": "Shared investiture (resilient)"
     }
   }
