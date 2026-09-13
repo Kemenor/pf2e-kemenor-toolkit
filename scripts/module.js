@@ -18,9 +18,16 @@ import {
     sharedRuneSource,
     setSharedWeapon,
 } from "./investiture.js";
-import { dismissEidolon, manifestEidolon, toggleEidolon } from "./manifest.js";
+import {
+    dismissEidolon,
+    manifestEidolon,
+    registerManifestAction,
+    requestToggle,
+    toggleEidolon,
+} from "./manifest.js";
 import { isDelayed, registerDelay, requestDelay, requestReturn } from "./delay.js";
 import { registerComposition } from "./composition.js";
+import { MacroInstaller, createMacros, linkDialog, selectedActor } from "./macros.js";
 
 // `reload` marks settings that change wrapper registration or data preparation, which only take
 // effect on a fresh load. The delay settings only gate presentation, so they apply immediately.
@@ -34,6 +41,7 @@ const SETTINGS = {
     delayEffect: { default: true, reload: false },
     delayChatCard: { default: true, reload: false },
     compositionAutomation: { default: true, reload: false },
+    manifestAction: { default: true, reload: false },
 };
 
 Hooks.once("init", () => {
@@ -48,6 +56,15 @@ Hooks.once("init", () => {
             type: Boolean,
         });
     }
+
+    game.settings.registerMenu(MODULE_ID, "createMacros", {
+        name: `${MODULE_ID}.settings.createMacros.name`,
+        hint: `${MODULE_ID}.settings.createMacros.hint`,
+        label: `${MODULE_ID}.settings.createMacros.label`,
+        icon: "fa-solid fa-scroll",
+        type: MacroInstaller,
+        restricted: true,
+    });
 
     libWrapper.register(
         MODULE_ID,
@@ -84,6 +101,7 @@ Hooks.once("init", () => {
     registerInvestiture();
     registerDelay();
     registerComposition();
+    registerManifestAction();
     Hooks.on("renderSettingsConfig", onRenderSettings);
 
     game.kemenorToolkit = {
@@ -91,12 +109,15 @@ Hooks.once("init", () => {
         unlink,
         manifestEidolon,
         dismissEidolon,
-        toggleEidolon,
+        toggleEidolon: requestToggle,
         setSharedWeapon,
         sharedRuneSource,
         chooseSharedWeapon,
         getSummonerOf,
         getEidolonOf,
+        linkDialog,
+        createMacros,
+        selectedActor,
         delay: requestDelay,
         returnToInitiative: requestReturn,
         isDelayed,

@@ -1,4 +1,4 @@
-import { MODULE_ID, getEidolonOf, getSummonerOf, isEidolon, isSummoner, primaryToken } from "./lib.js";
+import { MODULE_ID, getEidolonOf, getSummonerOf, isEidolon, isSummoner, primaryToken, setting } from "./lib.js";
 
 function notify(message, type = "info") {
     ui.notifications[type](game.i18n.localize(message) ?? message);
@@ -84,4 +84,49 @@ export async function toggleEidolon(actor) {
     const eidolon = getEidolonOf(summoner ?? actor);
     if (!eidolon) return notify(`${MODULE_ID}.manifest.noEidolon`, "warn");
     return tokensOf(eidolon).length ? dismissEidolon(eidolon) : manifestEidolon(summoner);
+}
+
+/* -------------------------------------------- */
+/*  Manifest Eidolon action                     */
+/* -------------------------------------------- */
+
+const QUERY = `${MODULE_ID}.manifest`;
+
+/**
+ * Using the Manifest Eidolon action manifests or unmanifests the eidolon.
+ *
+ *   "Your eidolon appears in an open space adjacent to you, and can then take a single action. If
+ *    your eidolon was already manifested, you unmanifest it instead."
+ *
+ * One action covers both directions, so the action is wired to the toggle.
+ */
+export async function requestToggle(actor) {
+    if (game.user.isGM) return toggleEidolon(actor);
+
+    // Creating and deleting tokens is a GM permission.
+    const gm = game.users.activeGM;
+    if (!gm) return notify(`${MODULE_ID}.manifest.noActiveGM`, "warn");
+    return gm.query(QUERY, { actorUuid: actor.uuid }, { timeout: 10_000 });
+}
+
+async function handleToggle({ actorUuid }) {
+    const actor = await fromUuid(actorUuid);
+    if (actor) return toggleEidolon(actor);
+}
+
+export function registerManifestAction() {
+    CONFIG.queries[QUERY] = handleToggle;
+
+    Hooks.on("createChatMessage", async (message) => {
+        if (!setting("manifestAction")) return;
+        if (message.author?.id !== game.user.id) return;
+
+        const origin = message.flags?.pf2e?.origin;
+        if (!origin?.uuid) return;
+        const item = await fromUuid(origin.uuid);
+        if (item?.slug !== "manifest-eidolon") return;
+
+        const actor = message.actor;
+        if (actor && getEidolonOf(actor)) requestToggle(actor);
+    });
 }

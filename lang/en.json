@@ -37,6 +37,15 @@
       "compositionAutomation": {
         "name": "Automate Lingering Composition",
         "hint": "Casting Lingering Composition rolls Performance against the standard DC for the highest-level target and arms the next composition cantrip. Casting that cantrip applies its spell effect to the caster and every ally in the emanation for the rounds earned."
+      },
+      "manifestAction": {
+        "name": "Manifest Eidolon action",
+        "hint": "Using the Manifest Eidolon action places the eidolon next to its summoner, or unmanifests it if it is already out."
+      },
+      "createMacros": {
+        "name": "Macros",
+        "label": "Create macros",
+        "hint": "Add a folder of ready-made macros to this world: manifest or dismiss an eidolon, share weapon runes, pair a summoner by hand, and delay. Drag them onto a hotbar. Safe to run again to refresh them."
       }
     },
     "autoLink": {
@@ -49,7 +58,8 @@
       "noToken": "The summoner has no token on any scene.",
       "already": "The eidolon is already manifested on this scene.",
       "notManifested": "The eidolon is not manifested.",
-      "noPermission": "You do not have permission to create or delete tokens on this scene."
+      "noPermission": "You do not have permission to create or delete tokens on this scene.",
+      "noActiveGM": "No GM is online, so the eidolon's token can't be placed or removed."
     },
     "shared": {
       "title": "Share weapon runes with eidolon",
@@ -90,6 +100,24 @@
       "eidolon": "Summoner and eidolon",
       "delay": "Delay",
       "composition": "Compositions"
+    },
+    "macros": {
+      "folder": "PF2e Kemenor Toolkit",
+      "manifest": "Manifest or Dismiss Eidolon",
+      "shareWeapon": "Share Weapon Runes with Eidolon",
+      "link": "Pair Summoner and Eidolon",
+      "delay": "Delay or Return to Initiative",
+      "created": "Created {count} macros in the \"{folder}\" folder."
+    },
+    "link": {
+      "title": "Pair Summoner and Eidolon",
+      "hint": "Choose which eidolon belongs to which summoner. This is only needed when they don't share a player owner, or when a summoner has more than one possible eidolon.",
+      "summoner": "Summoner",
+      "eidolon": "Eidolon",
+      "confirm": "Pair them",
+      "unlink": "Unpair",
+      "unlinked": "Unpaired {summoner} from {eidolon}.",
+      "nothingToLink": "This world has no summoners or no eidolons to pair."
     }
   }
 }
