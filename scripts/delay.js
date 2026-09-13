@@ -249,6 +249,10 @@ function onRenderTracker(_app, html) {
     if (!root) return;
 
     for (const li of root.querySelectorAll("li.combatant")) {
+        // Both `renderCombatTracker` and `renderEncounterTracker` fire for the same tracker, so
+        // clear first rather than appending a second button on every render.
+        for (const stale of li.querySelectorAll(`.${MODULE_ID}-delay-button`)) stale.remove();
+
         const combatant = combat.combatants.get(li.dataset.combatantId ?? "");
         if (!combatant?.isOwner || combatant.initiative === null) continue;
 
