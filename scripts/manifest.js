@@ -4,11 +4,14 @@ function notify(message, type = "info") {
     ui.notifications[type](game.i18n.localize(message) ?? message);
 }
 
-/** Tokens of this actor across every scene, so a dismissed eidolon leaves nothing behind. */
-function tokensOf(actor) {
-    return game.scenes.contents.flatMap((scene) =>
-        scene.tokens.filter((t) => t.actorId === actor.id),
-    );
+/**
+ * Placed tokens of this actor. Scoped to one scene by default: a long-running world
+ * accumulates the same actor's tokens across every scene it has ever visited, and dismissing
+ * an eidolon means removing it from play here, not erasing it from the campaign's history.
+ */
+function tokensOf(actor, { scene = null, allScenes = false } = {}) {
+    const scenes = allScenes ? game.scenes.contents : [scene ?? canvas.scene].filter(Boolean);
+    return scenes.flatMap((s) => s.tokens.filter((t) => t.actorId === actor.id));
 }
 
 /**
@@ -53,12 +56,15 @@ export async function manifestEidolon(summoner) {
     }
 }
 
-/** Dismiss Eidolon: remove its tokens. The actor and all its data are untouched. */
-export async function dismissEidolon(actor, { silent = false } = {}) {
+/**
+ * Dismiss Eidolon: remove its tokens from the current scene. The actor and all its data are
+ * untouched. Pass `allScenes` to sweep a stale token out of every scene in the world.
+ */
+export async function dismissEidolon(actor, { silent = false, scene = null, allScenes = false } = {}) {
     const eidolon = isEidolon(actor) ? actor : getEidolonOf(actor);
     if (!eidolon) return silent ? null : notify(`${MODULE_ID}.manifest.noEidolon`, "warn");
 
-    const tokens = tokensOf(eidolon);
+    const tokens = tokensOf(eidolon, { scene, allScenes });
     if (!tokens.length) return silent ? null : notify(`${MODULE_ID}.manifest.notManifested`);
 
     const bySceneId = {};

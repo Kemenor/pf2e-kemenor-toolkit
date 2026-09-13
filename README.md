@@ -49,8 +49,11 @@ game.kemenorToolkit.dismissEidolon(actor);           // remove its tokens, every
 game.kemenorToolkit.toggleEidolon(actor);            // whichever applies
 ```
 
-Dismissal clears the eidolon's tokens on every scene, not just the current one. With
-**Dismiss at 0 hit points** on, reaching 0 in the shared pool dismisses automatically.
+Dismissal removes the eidolon's tokens from the current scene only. A world that has been
+running a while accumulates the same actor's tokens across every scene it ever visited, and
+dismissing should not erase those. Pass `{ allScenes: true }` to sweep a stale token everywhere.
+With **Dismiss at 0 hit points** on, reaching 0 in the shared pool dismisses automatically, on
+the scene the summoner is standing on.
 
 ### Shared investiture
 

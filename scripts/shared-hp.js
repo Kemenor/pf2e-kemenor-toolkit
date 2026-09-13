@@ -79,7 +79,7 @@ export function registerSharedHitPoints() {
         refresh(eidolon);
 
         if (touchedHP && setting("autoDismiss") && actor.system.attributes.hp.value === 0) {
-            if (game.user === game.users.activeGM) dismissOnZero(eidolon);
+            if (game.user === game.users.activeGM) dismissOnZero(actor, eidolon);
         }
     });
 
@@ -106,9 +106,12 @@ export function registerSharedHitPoints() {
     });
 }
 
-async function dismissOnZero(eidolon) {
+async function dismissOnZero(summoner, eidolon) {
     const { dismissEidolon } = await import("./manifest.js");
-    return dismissEidolon(eidolon, { silent: true });
+    // Dismiss where the summoner is standing, which is where play is happening -- not
+    // whichever scene the GM happens to be looking at.
+    const scene = summoner.getActiveTokens(false, true)[0]?.parent ?? null;
+    return dismissEidolon(eidolon, { silent: true, scene });
 }
 
 export { MODULE_ID };
