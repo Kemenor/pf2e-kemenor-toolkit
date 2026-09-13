@@ -101,6 +101,43 @@ With exactly one invested, held weapon no bookkeeping is needed — it is simply
 flag only comes into play to break a tie between several. Invested handwraps of mighty blows
 always win.
 
+## Delay
+
+The system ships Delay as a `SimpleAction` — it posts the free action to chat and does nothing to
+the initiative order. This implements the rest of it.
+
+An hourglass appears on the active combatant in the encounter tracker. Delaying ends the turn and
+takes them out of the order; their slot is passed over for the remainder of the round. A play
+arrow then appears on their row, and returning drops them in immediately after whoever just acted,
+permanently setting their initiative to that position.
+
+There is deliberately no "pick your slot" prompt when you delay. The action reads:
+
+> "You can return to the initiative order as a free action triggered by the end of any other
+> creature's turn."
+
+Any creature's — so there is no set of legal slots to choose between, and committing to one up
+front asks for the very information you delayed in order to find out.
+
+If the delay is never taken, it lapses on its own: when the original slot comes round again the
+combatant simply takes a normal turn there, initiative unchanged, matching "If you Delay an entire
+round without returning to the initiative order, the actions from the Delayed turn are lost, your
+initiative doesn't change, and your next turn occurs at your original position."
+
+Players can use the button. Only a GM may write initiative or advance an encounter, so a player's
+click is forwarded to the active GM's client through a Foundry query rather than failing on
+permissions; with no GM online the button reports that instead of half-completing.
+
+Reordering rewrites `flags.pf2e.overridePriority` for every combatant sharing the resulting
+initiative value, the same way the tracker's own drag-and-drop does — equal initiative alone
+leaves the order down to combatant id.
+
+```js
+game.kemenorToolkit.delay(combatant);
+game.kemenorToolkit.returnToInitiative(combatant);
+game.kemenorToolkit.isDelayed(combatant);
+```
+
 ## Settings
 
 | Setting | Default |
@@ -110,6 +147,9 @@ always win.
 | Shared investiture | on |
 | Link summoners automatically | on |
 | Dismiss at 0 hit points | on |
+| Delay button in the combat tracker | on |
+| Delaying effect | on |
+| Announce Delay in chat | on |
 
 ## Installation
 

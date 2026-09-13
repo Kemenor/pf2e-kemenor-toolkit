@@ -1,0 +1,12 @@
+.pf2e-kemenor-toolkit-delay-button {
+    flex: 0 0 1.5rem;
+    align-self: center;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0.75;
+}
+
+.pf2e-kemenor-toolkit-delay-button:hover {
+    opacity: 1;
+    text-shadow: 0 0 8px var(--color-shadow-primary, #ff0);
+}

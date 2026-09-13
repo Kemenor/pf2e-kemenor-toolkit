@@ -21,6 +21,18 @@
       "autoDismiss": {
         "name": "Dismiss at 0 hit points",
         "hint": "Remove the eidolon's tokens when the shared pool reaches 0."
+      },
+      "delayButton": {
+        "name": "Delay button in the combat tracker",
+        "hint": "Show an hourglass on the active combatant to Delay, and a play arrow on a delayed combatant to return to the initiative order."
+      },
+      "delayEffect": {
+        "name": "Delaying effect",
+        "hint": "Put a Delaying effect on the actor while they are out of the initiative order, as a token-side reminder that they cannot use reactions."
+      },
+      "delayChatCard": {
+        "name": "Announce Delay in chat",
+        "hint": "Post a free-action card when a combatant delays, returns, or lets a delay lapse."
       }
     },
     "autoLink": {
@@ -44,6 +56,25 @@
     "investiture": {
       "ac": "Eidolon defenses + shared investiture",
       "save": "Shared investiture (resilient)"
+    },
+    "delay": {
+      "delay": "Delay",
+      "return": "Return to the initiative order",
+      "effect": "Delaying",
+      "effectHint": "Removed from the initiative order. You can't use reactions until you return.",
+      "card": {
+        "delay": "Delay",
+        "return": "Return to Initiative",
+        "lapse": "Delay Lapsed"
+      },
+      "errors": {
+        "notStarted": "The encounter hasn't started.",
+        "notOwner": "You don't own that combatant.",
+        "notYourTurn": "You can only Delay on your own turn.",
+        "returnNeedsAnotherTurn": "Returning is triggered by the end of another creature's turn.",
+        "noActiveGM": "No GM is online, so initiative can't be changed.",
+        "queryFailed": "The GM's client couldn't complete the request. See the console for details."
+      }
     }
   }
 }

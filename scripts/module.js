@@ -13,24 +13,30 @@ import {
 import { registerSharedHitPoints, shareHeroPoints, shareHitPoints } from "./shared-hp.js";
 import { applyInvestiture, onWeaponPrepareBaseData, sharedRuneSource, setSharedWeapon } from "./investiture.js";
 import { dismissEidolon, manifestEidolon, toggleEidolon } from "./manifest.js";
+import { isDelayed, registerDelay, requestDelay, requestReturn } from "./delay.js";
 
+// `reload` marks settings that change wrapper registration or data preparation, which only take
+// effect on a fresh load. The delay settings only gate presentation, so they apply immediately.
 const SETTINGS = {
-    sharedHP: true,
-    sharedHeroPoints: true,
-    sharedInvestiture: true,
-    autoLink: true,
-    autoDismiss: true,
+    sharedHP: { default: true, reload: true },
+    sharedHeroPoints: { default: true, reload: true },
+    sharedInvestiture: { default: true, reload: true },
+    autoLink: { default: true, reload: true },
+    autoDismiss: { default: true, reload: true },
+    delayButton: { default: true, reload: false },
+    delayEffect: { default: true, reload: false },
+    delayChatCard: { default: true, reload: false },
 };
 
 Hooks.once("init", () => {
-    for (const [key, defaultValue] of Object.entries(SETTINGS)) {
+    for (const [key, config] of Object.entries(SETTINGS)) {
         game.settings.register(MODULE_ID, key, {
             name: `${MODULE_ID}.settings.${key}.name`,
             hint: `${MODULE_ID}.settings.${key}.hint`,
             scope: "world",
             config: true,
-            requiresReload: true,
-            default: defaultValue,
+            requiresReload: config.reload,
+            default: config.default,
             type: Boolean,
         });
     }
@@ -67,6 +73,7 @@ Hooks.once("init", () => {
     );
 
     registerSharedHitPoints();
+    registerDelay();
 
     game.kemenorToolkit = {
         link,
@@ -79,6 +86,9 @@ Hooks.once("init", () => {
         chooseSharedWeapon,
         getSummonerOf,
         getEidolonOf,
+        delay: requestDelay,
+        returnToInitiative: requestReturn,
+        isDelayed,
     };
 });
 
