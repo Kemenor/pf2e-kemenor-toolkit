@@ -166,6 +166,12 @@ persistent aura, so it also works on gridless scenes where PF2e's aura support d
 Effects are applied by the GM's client through a query, since a player has no permission to create
 items on another player's actor.
 
+If another module hands out the same composition effect through an aura — pf2e-automations ships
+`Aura: Courageous Anthem`, which reacts to the same cast — that source is cleared, because two of
+them means duplicate effects and an aura-applied copy with an unlimited duration that outlives the
+spell. Detection is by behaviour rather than by name: any effect whose Aura rule grants this very
+spell effect. Turn the setting off to hand the job back.
+
 ## Settings
 
 | Setting | Default |

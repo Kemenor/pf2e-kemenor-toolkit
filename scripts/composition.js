@@ -158,6 +158,8 @@ async function applyComposition({ casterUuid, spellUuid, effectUuid, rounds, tar
         target: null,
     };
 
+    await clearCompetingAuras(caster, effectUuid);
+
     for (const uuid of targetUuids) {
         const actor = await fromUuid(uuid);
         if (!actor) continue;
@@ -170,6 +172,9 @@ async function applyComposition({ casterUuid, spellUuid, effectUuid, rounds, tar
         await actor.createEmbeddedDocuments("Item", [foundry.utils.deepClone(source)]);
     }
 
+    // Another module may be applying the same effect a moment later; sweep once more.
+    setTimeout(() => clearCompetingAuras(caster, effectUuid, targetUuids), 600);
+
     ChatMessage.create({
         speaker: ChatMessage.getSpeaker({ actor: caster, token: casterToken }),
         content: `<div class="pf2e chat-card"><p>${game.i18n.format(`${MODULE_ID}.composition.applied`, {
@@ -178,6 +183,41 @@ async function applyComposition({ casterUuid, spellUuid, effectUuid, rounds, tar
             count: targetUuids.length,
         })}</p></div>`,
     });
+}
+
+
+/**
+ * Remove any other source handing out the same composition effect.
+ *
+ * pf2e-automations ships "Aura: Courageous Anthem", which reacts to the same cast and grants the
+ * identical spell effect through an Aura rule -- at an unlimited duration that never expires.
+ * Two sources for one composition means duplicate effects on everyone and a bonus that outlives
+ * the spell. A composition affects whoever stands in the emanation at the moment it is cast
+ * rather than persisting as an aura, so this module takes ownership and clears the competitor.
+ *
+ * Detection is by behaviour, not by name: any effect carrying an Aura rule that grants this very
+ * spell effect. Turn off `compositionAutomation` to hand the job back.
+ */
+async function clearCompetingAuras(caster, effectUuid, targetUuids = []) {
+    if (!caster) return;
+
+    const auraSources = caster.itemTypes.effect.filter((effect) =>
+        (effect.system.rules ?? []).some(
+            (rule) => rule.key === "Aura" && (rule.effects ?? []).some((e) => e.uuid === effectUuid),
+        ),
+    );
+    if (auraSources.length) {
+        await caster.deleteEmbeddedDocuments("Item", auraSources.map((e) => e.id));
+    }
+
+    // Copies already handed out by such an aura are identifiable by their aura flag.
+    for (const uuid of targetUuids) {
+        const actor = await fromUuid(uuid);
+        const stale = actor?.itemTypes.effect.filter(
+            (e) => e._stats?.compendiumSource === effectUuid && e.flags?.pf2e?.aura,
+        );
+        if (stale?.length) await actor.deleteEmbeddedDocuments("Item", stale.map((e) => e.id));
+    }
 }
 
 /* -------------------------------------------- */
