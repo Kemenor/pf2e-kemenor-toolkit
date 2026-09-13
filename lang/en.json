@@ -37,7 +37,7 @@
     },
     "shared": {
       "title": "Share weapon runes with eidolon",
-      "hint": "Pick the magic weapon whose fundamental and property runes your eidolon's Strikes borrow. Only one weapon at a time, and only while you are holding it. Invested handwraps of mighty blows always take precedence.",
+      "hint": "Pick the magic weapon your eidolon's Strikes borrow runes from. It is given the invested trait and Invested for you, so it counts against your ten-item investiture limit and the inventory's own Invest toggle turns the sharing on and off. The runes only apply while you are holding it. Invested handwraps of mighty blows always take precedence.",
       "confirm": "Share",
       "noMagicWeapons": "This summoner carries no weapons with runes."
     },

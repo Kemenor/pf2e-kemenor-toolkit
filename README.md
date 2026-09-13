@@ -67,16 +67,25 @@ All four are applied, and all four show up on the eidolon's sheet rather than ap
 roll time.
 
 For the alternative path — "you can Invest a magic weapon (even though magic weapons can't
-normally be Invested) to share its fundamental and property runes with your eidolon" — note
-that the system has no notion of an invested weapon (`isInvested` is `null` for every weapon),
-so this module tracks the choice itself:
+normally be Invested) to share its fundamental and property runes with your eidolon" — the
+system has no invested weapons at all: `isInvested` is `null` for every weapon, because none of
+them carry the `invested` trait.
+
+The fix is to give the weapon that trait. That is what makes the system offer an Invest toggle
+for it and count it against the ten-item investiture limit, which is what Investing a weapon
+should cost. The module then reads the ordinary `isInvested` state, so the native toggle is the
+on/off switch, and adds the two limits the rules put on this specific case: the runes apply only
+while the weapon is held, and only one weapon at a time.
+
+Add the trait by hand, or let the module do it:
 
 ```js
 game.kemenorToolkit.chooseSharedWeapon();  // with the summoner's token selected
 ```
 
-One weapon at a time, and the runes only apply while it is actually held. Invested handwraps
-of mighty blows always win over a shared weapon.
+With exactly one invested, held weapon no bookkeeping is needed — it is simply used. The module
+flag only comes into play to break a tie between several. Invested handwraps of mighty blows
+always win.
 
 ## Settings
 

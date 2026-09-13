@@ -110,19 +110,28 @@ export function applyInvestiture(eidolon) {
 }
 
 /**
- * The weapon whose runes the eidolon's Strikes borrow: invested handwraps of mighty blows,
- * otherwise a magic weapon explicitly shared with the eidolon and currently held.
+ * The weapon whose runes the eidolon's Strikes borrow.
+ *
+ * Invested handwraps of mighty blows always win. Otherwise it is a magic weapon the summoner
+ * has Invested and is currently holding -- the system has no `invested` trait on weapons by
+ * default, so giving one the trait is what opts it in, and the native Invest toggle then acts
+ * as the on/off switch. The module flag only exists to disambiguate: with exactly one invested
+ * held weapon no flag is needed, and "you can have no more than one weapon invested in this way
+ * at a time" is satisfied on its own.
  */
 export function sharedRuneSource(summoner) {
-    const handwraps = summoner.itemTypes.weapon.find(
-        (w) => w.slug === "handwraps-of-mighty-blows" && w.isInvested,
-    );
+    const weapons = summoner.itemTypes.weapon;
+
+    const handwraps = weapons.find((w) => w.slug === "handwraps-of-mighty-blows" && w.isInvested);
     if (handwraps) return handwraps;
-    return (
-        summoner.itemTypes.weapon.find(
-            (w) => w.flags?.[MODULE_ID]?.[FLAGS.sharedWeapon] && w.handsHeld > 0,
-        ) ?? null
+
+    const eligible = weapons.filter(
+        (w) => w.isInvested && w.handsHeld > 0 && w.slug !== "handwraps-of-mighty-blows",
     );
+    if (eligible.length <= 1) return eligible[0] ?? null;
+
+    // More than one invested held weapon: the flag decides which one is shared.
+    return eligible.find((w) => w.flags?.[MODULE_ID]?.[FLAGS.sharedWeapon]) ?? null;
 }
 
 /**
@@ -156,12 +165,31 @@ export function onWeaponPrepareBaseData(wrapped, ...args) {
     return wrapped(...args);
 }
 
-/** Mark one magic weapon as shared with the eidolon, clearing any previous choice. */
+/**
+ * Invest one magic weapon on the summoner's behalf and share it with the eidolon.
+ *
+ * Magic weapons carry no `invested` trait, so this adds it -- which is what makes the system
+ * show an Invest toggle for the item and count it against the ten-item investiture limit, both
+ * of which are what "you can Invest a magic weapon" should mean mechanically.
+ */
 export async function setSharedWeapon(summoner, weapon) {
-    const previous = summoner.itemTypes.weapon.filter((w) => w.flags?.[MODULE_ID]?.[FLAGS.sharedWeapon]);
-    for (const old of previous) {
-        if (old.id !== weapon?.id) await old.unsetFlag(MODULE_ID, FLAGS.sharedWeapon);
+    for (const old of summoner.itemTypes.weapon) {
+        if (old.id === weapon?.id) continue;
+        if (old.flags?.[MODULE_ID]?.[FLAGS.sharedWeapon]) {
+            await old.unsetFlag(MODULE_ID, FLAGS.sharedWeapon);
+            await old.update({ "system.equipped.invested": false });
+        }
     }
-    if (weapon) await weapon.setFlag(MODULE_ID, FLAGS.sharedWeapon, true);
+
+    if (weapon) {
+        const traits = weapon._source.system.traits.value;
+        const update = { "system.equipped.invested": true };
+        if (!traits.includes("invested")) {
+            update["system.traits.value"] = [...traits, "invested"];
+        }
+        await weapon.update(update);
+        await weapon.setFlag(MODULE_ID, FLAGS.sharedWeapon, true);
+    }
+
     summoner.reset();
 }
