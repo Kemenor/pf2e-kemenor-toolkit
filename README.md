@@ -109,7 +109,9 @@ the initiative order. This implements the rest of it.
 An hourglass appears on the active combatant in the encounter tracker. Delaying ends the turn and
 takes them out of the order; their slot is passed over for the remainder of the round. A play
 arrow then appears on their row, and returning drops them in immediately after whoever just acted,
-permanently setting their initiative to that position.
+permanently setting their initiative to that position. Returning never ends anyone's turn — the
+combatant is slotted in behind whoever is currently acting and picks up the turn when that one
+finishes, which is what "triggered by the end of any other creature's turn" describes.
 
 There is deliberately no "pick your slot" prompt when you delay. The action reads:
 

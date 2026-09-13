@@ -104,16 +104,22 @@ async function handleReturn({ combatantUuid }) {
     await removeDelayingEffect(combatant.actor);
 
     // "This permanently changes your initiative to the new position."
+    const currentId = current.id;
     const order = combat.turns.filter((c) => typeof c.initiative === "number" && c !== combatant);
-    const afterIndex = order.findIndex((c) => c.id === current.id);
+    const afterIndex = order.findIndex((c) => c.id === currentId);
     order.splice(afterIndex + 1, 0, combatant);
     await combat.updateEmbeddedDocuments("Combatant", initiativeUpdates(combat, order, combatant));
 
-    await postCard(combatant, "return");
+    // Returning does not end anyone's turn. The trigger is the end of another creature's turn,
+    // so the combatant is slotted in directly behind whoever is acting and picks up the turn
+    // when that one finishes normally. Reordering can shift the turn pointer, so put it back on
+    // the combatant whose turn it actually still is.
+    if (combat.combatant?.id !== currentId) {
+        const turn = combat.turns.findIndex((c) => c.id === currentId);
+        if (turn >= 0) await combat.update({ turn }, { diff: false });
+    }
 
-    // They returned on the trigger "end of another creature's turn", so they act now.
-    const turn = combat.turns.findIndex((c) => c.id === combatant.id);
-    if (turn >= 0) await combat.update({ turn });
+    await postCard(combatant, "return");
 }
 
 const HANDLERS = { handleDelay, handleReturn };
