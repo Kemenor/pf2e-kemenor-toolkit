@@ -85,6 +85,11 @@
       "result": "{name}: the next composition will last {rounds} round(s). (DC {dc})",
       "applied": "{spell} applied to {count} creature(s) for {rounds} round(s).",
       "noGM": "No GM is online, so the composition effect can't be applied to allies."
+    },
+    "headings": {
+      "eidolon": "Summoner and eidolon",
+      "delay": "Delay",
+      "composition": "Compositions"
     }
   }
 }

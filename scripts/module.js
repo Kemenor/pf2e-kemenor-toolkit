@@ -84,6 +84,7 @@ Hooks.once("init", () => {
     registerInvestiture();
     registerDelay();
     registerComposition();
+    Hooks.on("renderSettingsConfig", onRenderSettings);
 
     game.kemenorToolkit = {
         link,
@@ -101,6 +102,36 @@ Hooks.once("init", () => {
         isDelayed,
     };
 });
+
+/**
+ * Section headings inside this module's block in Game Settings.
+ *
+ * Foundry renders one flat list per module, which reads as an undifferentiated pile once there
+ * are more than a handful. Each entry names the setting a heading is inserted above. The anchor
+ * is the input's `name`, because the settings form carries no per-setting id attribute.
+ */
+const SETTING_HEADINGS = {
+    sharedHP: "headings.eidolon",
+    delayButton: "headings.delay",
+    compositionAutomation: "headings.composition",
+};
+
+function onRenderSettings(_app, html) {
+    const root = html instanceof HTMLElement ? html : html?.[0];
+    if (!root) return;
+
+    for (const [key, label] of Object.entries(SETTING_HEADINGS)) {
+        const group = root.querySelector(`input[name="${MODULE_ID}.${key}"]`)?.closest(".form-group");
+        if (!group) continue;
+        // Re-renders would otherwise stack headings.
+        if (group.previousElementSibling?.classList.contains(`${MODULE_ID}-heading`)) continue;
+
+        const heading = document.createElement("h3");
+        heading.className = `${MODULE_ID}-heading`;
+        heading.textContent = game.i18n.localize(`${MODULE_ID}.${label}`);
+        group.before(heading);
+    }
+}
 
 Hooks.once("ready", async () => {
     if (game.modules.get("pf2e-eidolon-helper")?.active) {
