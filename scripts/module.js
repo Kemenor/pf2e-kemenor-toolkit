@@ -20,6 +20,7 @@ import {
 } from "./investiture.js";
 import { dismissEidolon, manifestEidolon, toggleEidolon } from "./manifest.js";
 import { isDelayed, registerDelay, requestDelay, requestReturn } from "./delay.js";
+import { registerComposition } from "./composition.js";
 
 // `reload` marks settings that change wrapper registration or data preparation, which only take
 // effect on a fresh load. The delay settings only gate presentation, so they apply immediately.
@@ -32,6 +33,7 @@ const SETTINGS = {
     delayButton: { default: true, reload: false },
     delayEffect: { default: true, reload: false },
     delayChatCard: { default: true, reload: false },
+    compositionAutomation: { default: true, reload: false },
 };
 
 Hooks.once("init", () => {
@@ -81,6 +83,7 @@ Hooks.once("init", () => {
     registerSharedHitPoints();
     registerInvestiture();
     registerDelay();
+    registerComposition();
 
     game.kemenorToolkit = {
         link,

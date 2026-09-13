@@ -146,6 +146,26 @@ game.kemenorToolkit.returnToInitiative(combatant);
 game.kemenorToolkit.isDelayed(combatant);
 ```
 
+## Lingering Composition
+
+> "If your next action is to cast a cantrip composition with a duration of 1 round, attempt a
+> Performance check. [...] Critical Success The composition lasts 4 rounds. Success The composition
+> lasts 3 rounds. Failure The composition lasts 1 round, but you don't spend the Focus Point."
+
+Casting Lingering Composition rolls Performance against the standard-difficulty DC for the
+highest-level target and arms the next composition cantrip. Casting that cantrip then applies its
+spell effect — read from the link in the spell's own description, so this is not specific to
+Courageous Anthem — to the caster and every ally inside the emanation, for the rounds earned. On a
+failure the focus point is handed back, as the spell says it should be.
+
+Nothing to remember and no macro to click: both spells are cast normally.
+
+Targets are resolved at the moment of casting, which is what an emanation does — it is not a
+persistent aura, so it also works on gridless scenes where PF2e's aura support does not.
+
+Effects are applied by the GM's client through a query, since a player has no permission to create
+items on another player's actor.
+
 ## Settings
 
 | Setting | Default |
@@ -158,6 +178,7 @@ game.kemenorToolkit.isDelayed(combatant);
 | Delay button in the combat tracker | on |
 | Delaying effect | on |
 | Announce Delay in chat | on |
+| Automate Lingering Composition | on |
 
 ## Installation
 

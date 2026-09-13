@@ -2,7 +2,7 @@
   "id": "pf2e-kemenor-toolkit",
   "title": "PF2e Kemenor Toolkit",
   "description": "A personal grab-bag of PF2e automations. Currently: summoner/eidolon linking, a genuinely shared hit point pool, Manifest/Dismiss Eidolon, and shared investiture (runes, AC, saves, Perception and skills).",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "authors": [
     {
       "name": "Kemenor",

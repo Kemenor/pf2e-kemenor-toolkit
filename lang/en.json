@@ -33,6 +33,10 @@
       "delayChatCard": {
         "name": "Announce Delay in chat",
         "hint": "Post a free-action card when a combatant delays, returns, or lets a delay lapse."
+      },
+      "compositionAutomation": {
+        "name": "Automate Lingering Composition",
+        "hint": "Casting Lingering Composition rolls Performance against the standard DC for the highest-level target and arms the next composition cantrip. Casting that cantrip applies its spell effect to the caster and every ally in the emanation for the rounds earned."
       }
     },
     "autoLink": {
@@ -75,6 +79,12 @@
         "noActiveGM": "No GM is online, so initiative can't be changed.",
         "queryFailed": "The GM's client couldn't complete the request. See the console for details."
       }
+    },
+    "composition": {
+      "checkLabel": "Lingering Composition",
+      "result": "{name}: the next composition will last {rounds} round(s). (DC {dc})",
+      "applied": "{spell} applied to {count} creature(s) for {rounds} round(s).",
+      "noGM": "No GM is online, so the composition effect can't be applied to allies."
     }
   }
 }
