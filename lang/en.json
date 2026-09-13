@@ -1,0 +1,49 @@
+{
+  "pf2e-kemenor-toolkit": {
+    "conflict": "PF2e Kemenor Toolkit: pf2e-eidolon-helper is also enabled. Both modules redirect eidolon hit point updates and will fight over them. Disable one.",
+    "settings": {
+      "sharedHP": {
+        "name": "Shared hit point pool",
+        "hint": "The eidolon has no hit points of its own: it reads and writes its summoner's pool. Dying, wounded and drained are applied to the summoner."
+      },
+      "sharedHeroPoints": {
+        "name": "Shared hero points",
+        "hint": "The eidolon reads and writes its summoner's hero points."
+      },
+      "sharedInvestiture": {
+        "name": "Shared investiture",
+        "hint": "Apply the summoner's invested-item benefits to the eidolon: handwraps or shared-weapon runes on its Strikes, armor potency to AC, resilient to saves, and item bonuses to Perception and skills."
+      },
+      "autoLink": {
+        "name": "Link summoners automatically",
+        "hint": "On world load, link each unlinked summoner to its eidolon when exactly one eidolon shares an owner with them. No macro, no targeting."
+      },
+      "autoDismiss": {
+        "name": "Dismiss at 0 hit points",
+        "hint": "Remove the eidolon's tokens when the shared pool reaches 0."
+      }
+    },
+    "autoLink": {
+      "linked": "Linked {summoner} to their eidolon {eidolon}.",
+      "ambiguous": "{summoner} has {count} possible eidolons. Link one manually with game.kemenorToolkit.link(summoner, eidolon)."
+    },
+    "manifest": {
+      "notSummoner": "Select a summoner's token first.",
+      "noEidolon": "That summoner has no linked eidolon.",
+      "noToken": "The summoner has no token on any scene.",
+      "already": "The eidolon is already manifested on this scene.",
+      "notManifested": "The eidolon is not manifested.",
+      "noPermission": "You do not have permission to create or delete tokens on this scene."
+    },
+    "shared": {
+      "title": "Share weapon runes with eidolon",
+      "hint": "Pick the magic weapon whose fundamental and property runes your eidolon's Strikes borrow. Only one weapon at a time, and only while you are holding it. Invested handwraps of mighty blows always take precedence.",
+      "confirm": "Share",
+      "noMagicWeapons": "This summoner carries no weapons with runes."
+    },
+    "investiture": {
+      "ac": "Shared investiture (armor potency)",
+      "save": "Shared investiture (resilient)"
+    }
+  }
+}
