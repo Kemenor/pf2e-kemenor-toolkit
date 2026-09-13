@@ -1,8 +1,5 @@
 export const MODULE_ID = "pf2e-kemenor-toolkit";
 
-/** Flags written by reyzor1991/pf2e-eidolon-helper, which this module replaces. */
-export const LEGACY_ID = "pf2e-eidolon-helper";
-
 export const FLAGS = {
     /** On an eidolon: the actor id of its summoner. */
     summoner: "summoner",
@@ -40,7 +37,7 @@ export function isEidolon(actor) {
  * data preparation and before `game.ready`.
  */
 function linkedId(actor, key) {
-    return actor?.flags?.[MODULE_ID]?.[key] ?? actor?.flags?.[LEGACY_ID]?.[key] ?? null;
+    return actor?.flags?.[MODULE_ID]?.[key] ?? null;
 }
 
 /** The summoner of an eidolon, or null. Never returns the actor itself. */

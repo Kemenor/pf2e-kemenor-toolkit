@@ -1,6 +1,5 @@
 import {
     FLAGS,
-    LEGACY_ID,
     MODULE_ID,
     candidateEidolons,
     getEidolonOf,
@@ -8,7 +7,6 @@ import {
     isEidolon,
     isSummoner,
     link,
-    log,
     refresh,
     unlink,
 } from "./lib.js";
@@ -90,7 +88,6 @@ Hooks.once("ready", async () => {
     }
     if (!game.user.isGM) return;
 
-    await migrateLegacyLinks();
     if (game.settings.get(MODULE_ID, "autoLink")) await autoLink();
 
     // Data preparation order across actors is not guaranteed on load, and an eidolon that
@@ -103,20 +100,6 @@ Hooks.once("ready", async () => {
         }
     }
 });
-
-/** Adopt links previously created by pf2e-eidolon-helper, so nothing has to be re-linked. */
-async function migrateLegacyLinks() {
-    for (const actor of game.actors) {
-        const legacy = actor.flags?.[LEGACY_ID];
-        if (!legacy) continue;
-        for (const key of [FLAGS.summoner, FLAGS.eidolon]) {
-            if (legacy[key] && !actor.flags?.[MODULE_ID]?.[key]) {
-                await actor.setFlag(MODULE_ID, key, legacy[key]);
-                log(`migrated ${key} link on ${actor.name} from ${LEGACY_ID}`);
-            }
-        }
-    }
-}
 
 /** Link each unlinked summoner to its eidolon when the pairing is unambiguous. */
 async function autoLink() {

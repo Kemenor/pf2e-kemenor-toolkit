@@ -17,8 +17,11 @@ the system already recognises — a `character` actor carrying the `eidolon` tra
 ### Linking
 
 Links are found automatically on world load: an unlinked summoner and exactly one eidolon-trait
-character sharing a player owner are paired without a macro or a targeting step. Links made by
-`pf2e-eidolon-helper` are adopted on first load, so nothing needs re-linking.
+character sharing a player owner are paired without a macro or a targeting step. Ownership is the
+matching signal on purpose — in a party with two summoners, pairing on names or traits would
+cheerfully bond the wrong eidolon to the wrong summoner and then share the wrong hit points.
+Where there is no shared player owner, or more than one candidate, the module declines to guess
+and you link it by hand.
 
 Manual control, if the pairing is ambiguous:
 
