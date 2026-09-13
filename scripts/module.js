@@ -11,7 +11,13 @@ import {
     unlink,
 } from "./lib.js";
 import { registerSharedHitPoints, shareHeroPoints, shareHitPoints } from "./shared-hp.js";
-import { applyInvestiture, onWeaponPrepareBaseData, sharedRuneSource, setSharedWeapon } from "./investiture.js";
+import {
+    applyInvestiture,
+    onWeaponPrepareBaseData,
+    registerInvestiture,
+    sharedRuneSource,
+    setSharedWeapon,
+} from "./investiture.js";
 import { dismissEidolon, manifestEidolon, toggleEidolon } from "./manifest.js";
 import { isDelayed, registerDelay, requestDelay, requestReturn } from "./delay.js";
 
@@ -73,6 +79,7 @@ Hooks.once("init", () => {
     );
 
     registerSharedHitPoints();
+    registerInvestiture();
     registerDelay();
 
     game.kemenorToolkit = {

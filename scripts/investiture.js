@@ -1,4 +1,4 @@
-import { FLAGS, MODULE_ID, getSummonerOf, setting } from "./lib.js";
+import { FLAGS, MODULE_ID, getEidolonOf, getSummonerOf, refresh, setting } from "./lib.js";
 
 /**
  * Shared investiture, from the Eidolon class feature:
@@ -223,4 +223,35 @@ export async function setSharedWeapon(summoner, weapon) {
     }
 
     summoner.reset();
+}
+
+/**
+ * Re-derive the eidolon when its summoner's possessions change.
+ *
+ * Everything shared by investiture is read off the summoner during the eidolon's own data
+ * preparation, and nothing tells the eidolon that the summoner's inventory moved. Swap the
+ * weapon whose runes are being shared, invest or divest something, change a rune, and the
+ * eidolon keeps serving whatever it derived last time until something else happens to reset it.
+ */
+export function registerInvestiture() {
+    const pending = new Set();
+    const flush = foundry.utils.debounce(() => {
+        for (const id of pending) {
+            const eidolon = game.actors.get(id);
+            eidolon?.reset();
+            refresh(eidolon);
+        }
+        pending.clear();
+    }, 50);
+
+    const onItemChange = (item) => {
+        const actor = item?.parent;
+        if (!actor?.isOfType?.("character") || !item.isOfType?.("physical")) return;
+        const eidolon = getEidolonOf(actor);
+        if (!eidolon) return;
+        pending.add(eidolon.id);
+        flush();
+    };
+
+    for (const hook of ["createItem", "updateItem", "deleteItem"]) Hooks.on(hook, onItemChange);
 }

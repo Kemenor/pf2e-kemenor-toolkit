@@ -80,6 +80,12 @@ eidolon whose summoner wears +1 armor ends up at +3, not +2.
 Saves work the other way round — the eidolon has no base item bonus there, so the resilient rune
 simply *grants* one.
 
+All of this is read off the summoner while the eidolon prepares its own data, and nothing
+otherwise tells the eidolon that the summoner's inventory moved. The module therefore re-derives
+the eidolon whenever a physical item on its summoner is created, changed or deleted — swapping the
+shared weapon, investing or divesting, or etching a new rune all take effect immediately rather
+than at whatever point something else happens to trigger a reset.
+
 For the alternative path — "you can Invest a magic weapon (even though magic weapons can't
 normally be Invested) to share its fundamental and property runes with your eidolon" — the
 system has no invested weapons at all: `isInvested` is `null` for every weapon, because none of
