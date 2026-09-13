@@ -1,4 +1,4 @@
-import { MODULE_ID, setting } from "./lib.js";
+import { MODULE_ID, primaryToken, setting } from "./lib.js";
 
 /**
  * Lingering Composition, automated end to end.
@@ -42,10 +42,6 @@ function effectUuidFor(spell) {
     return match?.[1] ?? null;
 }
 
-function tokenOf(actor) {
-    return actor?.getActiveTokens(false, true)[0] ?? null;
-}
-
 /** Distance between two token documents, edge to edge where the canvas can tell us. */
 function distanceBetween(a, b) {
     if (a?.object?.distanceTo && b?.object) return a.object.distanceTo(b.object);
@@ -58,7 +54,7 @@ function distanceBetween(a, b) {
 
 /** The caster and every ally inside the emanation. */
 function targetsInArea(caster, radius) {
-    const origin = tokenOf(caster);
+    const origin = primaryToken(caster);
     if (!origin) return [caster];
     const scene = origin.parent;
     const targets = new Set([caster]);
@@ -142,7 +138,7 @@ async function applyComposition({ casterUuid, spellUuid, effectUuid, rounds, tar
     const effect = await fromUuid(effectUuid);
     if (!effect) return;
 
-    const casterToken = tokenOf(caster);
+    const casterToken = primaryToken(caster);
     const source = effect.toObject();
     source._stats = { ...(source._stats ?? {}), compendiumSource: effectUuid };
     source.system.duration = { value: rounds, unit: "rounds", sustained: false, expiry: "turn-start" };

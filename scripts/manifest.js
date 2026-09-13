@@ -1,4 +1,4 @@
-import { MODULE_ID, getEidolonOf, getSummonerOf, isEidolon, isSummoner } from "./lib.js";
+import { MODULE_ID, getEidolonOf, getSummonerOf, isEidolon, isSummoner, primaryToken } from "./lib.js";
 
 function notify(message, type = "info") {
     ui.notifications[type](game.i18n.localize(message) ?? message);
@@ -29,7 +29,7 @@ export async function manifestEidolon(summoner) {
     const eidolon = getEidolonOf(summoner);
     if (!eidolon) return notify(`${MODULE_ID}.manifest.noEidolon`, "warn");
 
-    const summonerToken = summoner.getActiveTokens(false, true)[0];
+    const summonerToken = primaryToken(summoner);
     if (!summonerToken) return notify(`${MODULE_ID}.manifest.noToken`, "warn");
 
     const scene = summonerToken.parent;

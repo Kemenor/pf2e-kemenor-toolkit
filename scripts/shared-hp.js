@@ -1,4 +1,4 @@
-import { MODULE_ID, getEidolonOf, getSummonerOf, refresh, setting } from "./lib.js";
+import { MODULE_ID, getEidolonOf, getSummonerOf, primaryToken, refresh, setting } from "./lib.js";
 
 /**
  * "The connection between you and your eidolon means you both share a single pool of Hit
@@ -110,7 +110,7 @@ async function dismissOnZero(summoner, eidolon) {
     const { dismissEidolon } = await import("./manifest.js");
     // Dismiss where the summoner is standing, which is where play is happening -- not
     // whichever scene the GM happens to be looking at.
-    const scene = summoner.getActiveTokens(false, true)[0]?.parent ?? null;
+    const scene = primaryToken(summoner)?.parent ?? null;
     return dismissEidolon(eidolon, { silent: true, scene });
 }
 

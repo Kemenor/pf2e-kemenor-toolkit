@@ -99,6 +99,25 @@ export function candidateEidolons(summoner) {
     );
 }
 
+/**
+ * The token to treat as an actor's position.
+ *
+ * `getActiveTokens` returns tokens across every scene in the world, and a long-running game
+ * leaves the same actor placed on dozens of them, so its first entry is effectively arbitrary.
+ * Anything measuring distance or placing a token has to start from the scene actually in play or
+ * it will silently work off a map nobody is looking at.
+ */
+export function primaryToken(actor) {
+    const tokens = actor?.getActiveTokens?.(false, true) ?? [];
+    if (tokens.length <= 1) return tokens[0] ?? null;
+    const preferred = [canvas.scene?.id, game.scenes.active?.id].filter(Boolean);
+    for (const sceneId of preferred) {
+        const match = tokens.find((t) => t.parent?.id === sceneId);
+        if (match) return match;
+    }
+    return tokens[0] ?? null;
+}
+
 export function log(...args) {
     console.log(`${MODULE_ID} |`, ...args);
 }
