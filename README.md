@@ -28,7 +28,7 @@ Requires [libWrapper](https://github.com/ruipin/fvtt-lib-wrapper).
 
 ### Pairing
 
-Summoners are paired with their eidolon automatically when the world loads — no macro, no
+Summoners are paired with their eidolon automatically when the world loads. No macro, no
 targeting. A summoner is matched to an eidolon-trait character that shares a player owner.
 
 When there is no shared owner, or a summoner has more than one possible eidolon, nothing is paired
@@ -67,7 +67,7 @@ Note *increases* in the AC clause: an eidolon already has an item bonus to AC fr
 (+2 for Strength, +1 for Dexterity), and the summoner's armor potency adds on top rather than
 replacing it. A Strength-key eidolon whose summoner wears +1 armor ends up at +3.
 
-Saves work the other way round — the eidolon has no base item bonus there, so the resilient rune
+Saves work the other way round: the eidolon has no base item bonus there, so the resilient rune
 grants one.
 
 Everything shows on the eidolon's sheet and updates as soon as the summoner's gear changes:
@@ -115,7 +115,7 @@ and takes them out of the initiative order; their slot is skipped for the rest o
 
 A play arrow then appears on their row. Clicking it puts them back into the order directly behind
 whoever is currently acting, permanently setting their initiative to that position. They pick up the
-turn when the current one finishes — returning never cuts anyone's turn short.
+turn when the current one finishes. Returning never cuts anyone's turn short.
 
 A delay that is never taken lapses on its own: when the original slot comes round again the
 combatant takes a normal turn there, with their initiative unchanged.
@@ -130,8 +130,8 @@ Players can use both buttons. A GM has to be online.
 > The composition lasts 3 rounds. **Failure** The composition lasts 1 round, but you don't spend the
 > Focus Point for casting this spell.
 
-Cast Lingering Composition and then a composition cantrip. Both are cast normally — there is no
-macro to remember.
+Cast Lingering Composition and then a composition cantrip. Both are cast normally, and there is
+no macro to remember.
 
 Casting Lingering Composition rolls the Performance check against the right DC. Casting the cantrip
 then applies its spell effect to the caster and every ally inside the emanation, for the rounds
@@ -201,7 +201,7 @@ The same dialog unpairs them with the **Unpair** button.
 ### Why weren't they paired automatically?
 
 Automatic pairing only fires when a summoner and exactly one eidolon share a player owner. If the
-eidolon has no player owner, or a player has two eidolons, it will not guess — pair them by hand
+eidolon has no player owner, or a player has two eidolons, it will not guess. Pair them by hand
 using the steps above. A pairing you set yourself is never overwritten.
 
 ### My eidolon's runes or AC look wrong
@@ -213,8 +213,8 @@ not stack: the eidolon shows one combined item bonus to AC rather than two separ
 ### Can players use all this?
 
 Yes. Delaying, returning, manifesting and casting all work from a player's own client. Some of it
-needs a GM logged in, because only a GM may change initiative or create tokens — if no GM is online
-you get a message saying so rather than a half-finished action.
+needs a GM logged in, because only a GM may change initiative or create tokens. If no GM is
+online you get a message saying so rather than a half-finished action.
 
 ### Can I call any of this from my own macros?
 
@@ -238,11 +238,12 @@ Everything is on `game.kemenorToolkit`:
 
 ## Compatibility
 
-**`pf2e-eidolon-helper`** — conflicts. Both redirect eidolon hit point updates, so enable only one.
-The module warns on load if it finds the other active.
+**`pf2e-eidolon-helper`** conflicts with this module. Both redirect eidolon hit point updates, so
+enable only one. The module warns on load if it finds the other active.
 
-**`pf2e-automations`** — its `Aura: Courageous Anthem` is removed when a composition is applied, so
-the effect is not handed out twice with a duration that never expires.
+**`pf2e-automations`** works alongside this module. Its `Aura: Courageous Anthem` is removed when
+a composition is applied, so the effect is not handed out twice with a duration that never
+expires.
 
 ## Credits
 
