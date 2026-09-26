@@ -92,6 +92,8 @@
     },
     "composition": {
       "checkLabel": "Lingering Composition",
+      "effectName": "Effect: Lingering Composition",
+      "effectDescription": "Granted by Lingering Composition. Your next composition cantrip this turn lasts {rounds} rounds.",
       "result": "{name}: the next composition will last {rounds} round(s). (DC {dc})",
       "applied": "{spell} applied to {count} creature(s) for {rounds} round(s).",
       "noGM": "No GM is online, so the composition effect can't be applied to allies."

@@ -12,9 +12,13 @@ import { MODULE_ID, primaryToken, setting } from "./lib.js";
  * Casting Lingering Composition rolls the check and arms the next composition cantrip. Casting
  * that cantrip then applies its spell effect to the caster and every ally in the emanation, for
  * however many rounds the check earned. Nothing to remember and no macro to click.
+ *
+ * The rounds earned are held on the caster as an effect whose badge is that number, the way
+ * "Effect: Devise a Stratagem" holds its substituted d20. The result is visible on the token, the
+ * GM can correct it by editing the badge, and it expires at the end of the turn by itself.
  */
 
-const ARMED = "lingeringComposition";
+const ARMED = "lingering";
 const QUERY = `${MODULE_ID}.composition`;
 
 /** Standard-difficulty DC by level. */
@@ -68,10 +72,60 @@ function targetsInArea(caster, radius) {
 }
 
 /* -------------------------------------------- */
+/*  The armed effect                            */
+/* -------------------------------------------- */
+
+/** The effect holding a successful check until a composition cantrip spends it. */
+function armedEffect(caster) {
+    return caster?.itemTypes.effect.find((effect) => effect.flags?.[MODULE_ID]?.[ARMED]) ?? null;
+}
+
+/** Rounds an armed effect is worth, or 1 if it has already lapsed. */
+function armedRounds(effect) {
+    if (!effect || effect.remainingDuration?.expired || effect.isExpired) return 1;
+    const value = Math.floor(Number(effect.system.badge?.value));
+    return Number.isFinite(value) ? Math.clamp(value, 1, 10) : 1;
+}
+
+function armedSource(rounds, { caster, spell, roll, degree }) {
+    return {
+        name: game.i18n.localize(`${MODULE_ID}.composition.effectName`),
+        type: "effect",
+        img: "systems/pf2e/icons/spells/lingering-composition.webp",
+        system: {
+            slug: "lingering-composition-armed",
+            description: {
+                value: `<p>${game.i18n.format(`${MODULE_ID}.composition.effectDescription`, { rounds })}</p>`,
+            },
+            // Value 0 with turn-end expiry lasts until the end of the caster's own turn, which is as
+            // long as "if your next action is to cast a cantrip composition" can reach.
+            duration: { value: 0, unit: "rounds", sustained: false, expiry: "turn-end" },
+            level: { value: spell?.level ?? 1 },
+            badge: { type: "value", value: rounds },
+            tokenIcon: { show: true },
+            traits: { value: [] },
+            context: {
+                origin: {
+                    actor: caster.uuid,
+                    item: spell?.uuid ?? null,
+                    token: primaryToken(caster)?.uuid ?? null,
+                    spellcasting: null,
+                    rollOptions: [],
+                },
+                roll: { total: roll?.total ?? null, degreeOfSuccess: degree ?? null },
+                target: null,
+            },
+            rules: [],
+        },
+        flags: { [MODULE_ID]: { [ARMED]: true } },
+    };
+}
+
+/* -------------------------------------------- */
 /*  Casting                                     */
 /* -------------------------------------------- */
 
-async function onLingeringComposition(caster) {
+async function onLingeringComposition(caster, spell) {
     const radius = 60; // Every composition cantrip is a 60-foot emanation.
     const targets = targetsInArea(caster, radius);
     const highestLevel = Math.max(...targets.map((a) => a.level ?? 0), caster.level ?? 0);
@@ -87,8 +141,14 @@ async function onLingeringComposition(caster) {
     const degree = roll.options?.degreeOfSuccess ?? 1;
     const rounds = ROUNDS_BY_DEGREE[degree] ?? 1;
 
+    // A second cast replaces the first rather than stacking.
+    const stale = armedEffect(caster);
+    if (stale) await stale.delete();
+
     if (degree >= 2) {
-        await caster.setFlag(MODULE_ID, ARMED, { rounds, at: game.time.worldTime });
+        await caster.createEmbeddedDocuments("Item", [
+            armedSource(rounds, { caster, spell, roll, degree }),
+        ]);
     } else {
         // "Failure The composition lasts 1 round, but you don't spend the Focus Point."
         const focus = caster.system.resources?.focus;
@@ -103,9 +163,9 @@ async function onLingeringComposition(caster) {
 }
 
 async function onCompositionCantrip(caster, spell) {
-    const armed = caster.getFlag(MODULE_ID, ARMED);
-    const rounds = armed?.rounds ?? 1;
-    if (armed) await caster.unsetFlag(MODULE_ID, ARMED);
+    const armed = armedEffect(caster);
+    const rounds = armedRounds(armed);
+    if (armed) await armed.delete();
 
     const effectUuid = effectUuidFor(spell);
     if (!effectUuid) return;
@@ -235,7 +295,7 @@ export function registerComposition() {
         const caster = message.actor;
         if (!spell || !caster) return;
 
-        if (spell.slug === "lingering-composition") return onLingeringComposition(caster);
+        if (spell.slug === "lingering-composition") return onLingeringComposition(caster, spell);
         if (isComposition(spell)) return onCompositionCantrip(caster, spell);
     });
 }
