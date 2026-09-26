@@ -139,9 +139,9 @@ spends that effect and applies the spell effect to the caster and every ally ins
 for that many rounds. A failed check hands the focus point back and arms nothing.
 
 The badge works the way Effect: Devise a Stratagem holds its d20, so the result is visible on the
-token instead of hidden. You can edit the badge to change the rounds, delete the effect to cancel,
-or add the effect by hand after rolling Performance yourself. It expires at the end of the caster's
-turn, so a forgotten cast cannot extend a composition next round.
+token instead of hidden. You can edit the badge to change the rounds, or delete the effect to
+cancel. It expires at the end of the caster's turn, so a forgotten cast cannot extend a composition
+next round.
 
 This works for any composition cantrip, not just Courageous Anthem. The effect applied is whichever
 spell effect is linked first in that spell's description, so linking a custom effect there uses it
